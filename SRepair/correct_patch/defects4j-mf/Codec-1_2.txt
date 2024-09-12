@@ -1,0 +1,345 @@
+
+1:
+public String caverphone(String txt) {
+    // NOTE: Version 1.0 of Caverphone is easily derivable from this code 
+    // by commenting out the 2.0 lines and adding in the 1.0 lines
+
+    if( txt == null || txt.length() == 0 ) {
+        return "1111111111";
+    }
+
+    // 1. Convert to lowercase
+    txt = txt.toLowerCase(java.util.Locale.ENGLISH);
+
+    // 2. Remove anything not A-Z
+    txt = txt.replaceAll("[^a-z]", "");
+
+    // 2.5. Remove final e
+    txt = txt.replaceAll("e$", "");             // 2.0 only
+
+    // 3. Handle various start options
+    txt = txt.replaceAll("^cough", "cou2f");
+    txt = txt.replaceAll("^rough", "rou2f");
+    txt = txt.replaceAll("^tough", "tou2f");
+    txt = txt.replaceAll("^enough", "enou2f");  // 2.0 only
+    txt = txt.replaceAll("^trough", "trou2f");  // 2.0 only - note the spec says ^enough here again, c+p error I assume
+    txt = txt.replaceAll("^gn", "2n");
+    txt = txt.replaceAll("^mb", "m2");
+
+    // 4. Handle replacements
+    txt = txt.replaceAll("cq", "2q");
+    txt = txt.replaceAll("ci", "si");
+    txt = txt.replaceAll("ce", "se");
+    txt = txt.replaceAll("cy", "sy");
+    txt = txt.replaceAll("tch", "2ch");
+    txt = txt.replaceAll("c", "k");
+    txt = txt.replaceAll("q", "k");
+    txt = txt.replaceAll("x", "k");
+    txt = txt.replaceAll("v", "f");
+    txt = txt.replaceAll("dg", "2g");
+    txt = txt.replaceAll("tio", "sio");
+    txt = txt.replaceAll("tia", "sia");
+    txt = txt.replaceAll("d", "t");
+    txt = txt.replaceAll("ph", "fh");
+    txt = txt.replaceAll("b", "p");
+    txt = txt.replaceAll("sh", "s2");
+    txt = txt.replaceAll("z", "s");
+    txt = txt.replaceAll("^[aeiou]", "A");
+    txt = txt.replaceAll("[aeiou]", "3");
+    txt = txt.replaceAll("j", "y");        // 2.0 only
+    txt = txt.replaceAll("^y3", "Y3");     // 2.0 only
+    txt = txt.replaceAll("^y", "A");       // 2.0 only
+    txt = txt.replaceAll("y", "3");        // 2.0 only
+    txt = txt.replaceAll("3gh3", "3kh3");
+    txt = txt.replaceAll("gh", "22");
+    txt = txt.replaceAll("g", "k");
+    txt = txt.replaceAll("s+", "S");
+    txt = txt.replaceAll("t+", "T");
+    txt = txt.replaceAll("p+", "P");
+    txt = txt.replaceAll("k+", "K");
+    txt = txt.replaceAll("f+", "F");
+    txt = txt.replaceAll("m+", "M");
+    txt = txt.replaceAll("n+", "N");
+    txt = txt.replaceAll("w3", "W3");
+    //txt = txt.replaceAll("wy", "Wy");    // 1.0 only
+    txt = txt.replaceAll("wh3", "Wh3");
+    txt = txt.replaceAll("w$", "3");       // 2.0 only
+    //txt = txt.replaceAll("why", "Why");  // 1.0 only
+    txt = txt.replaceAll("w", "2");
+    txt = txt.replaceAll("^h", "A");
+    txt = txt.replaceAll("h", "2");
+    txt = txt.replaceAll("r3", "R3");
+    txt = txt.replaceAll("r$", "3");       // 2.0 only
+    //txt = txt.replaceAll("ry", "Ry");    // 1.0 only
+    txt = txt.replaceAll("r", "2");
+    txt = txt.replaceAll("l3", "L3");
+    txt = txt.replaceAll("l$", "3");       // 2.0 only
+    //txt = txt.replaceAll("ly", "Ly");    // 1.0 only
+    txt = txt.replaceAll("l", "2");
+    //txt = txt.replaceAll("j", "y");      // 1.0 only
+    //txt = txt.replaceAll("y3", "Y3");    // 1.0 only
+    //txt = txt.replaceAll("y", "2");      // 1.0 only
+
+    // 5. Handle removals
+    txt = txt.replaceAll("2", "");
+    txt = txt.replaceAll("3$", "A");       // 2.0 only
+    txt = txt.replaceAll("3", "");
+
+    // 6. put ten 1s on the end
+    txt = txt + "111111" + "1111";        // 1.0 only has 6 1s
+
+    // 7. take the first six characters as the code
+    return txt.substring(0, 10);          // 1.0 truncates to 6
+}
+2:
+public String metaphone(String txt) {
+    boolean hard = false ;
+    if ((txt == null) || (txt.length() == 0)) {
+        return "" ;
+    }
+    // single character is itself
+    if (txt.length() == 1) {
+        return txt.toUpperCase(java.util.Locale.ENGLISH) ;
+    }
+  
+    char[] inwd = txt.toUpperCase(java.util.Locale.ENGLISH).toCharArray() ;
+  
+    StringBuffer local = new StringBuffer(40); // manipulate
+    StringBuffer code = new StringBuffer(10) ; //   output
+    // handle initial 2 characters exceptions
+    switch(inwd[0]) {
+    case 'K' : 
+    case 'G' : 
+    case 'P' : /* looking for KN, etc*/
+        if (inwd[1] == 'N') {
+            local.append(inwd, 1, inwd.length - 1);
+        } else {
+            local.append(inwd);
+        }
+        break;
+    case 'A': /* looking for AE */
+        if (inwd[1] == 'E') {
+            local.append(inwd, 1, inwd.length - 1);
+        } else {
+            local.append(inwd);
+        }
+        break;
+    case 'W' : /* looking for WR or WH */
+        if (inwd[1] == 'R') {   // WR -> R
+            local.append(inwd, 1, inwd.length - 1); 
+            break ;
+        }
+        if (inwd[1] == 'H') {
+            local.append(inwd, 1, inwd.length - 1);
+            local.setCharAt(0, 'W'); // WH -> W
+        } else {
+            local.append(inwd);
+        }
+        break;
+    case 'X' : /* initial X becomes S */
+        inwd[0] = 'S';
+        local.append(inwd);
+        break ;
+    default :
+        local.append(inwd);
+    } // now local has working string with initials fixed
+
+    int wdsz = local.length();
+    int n = 0 ;
+
+    while ((code.length() < this.getMaxCodeLen()) && 
+    	   (n < wdsz) ) { // max code size of 4 works well
+        char symb = local.charAt(n) ;
+        // remove duplicate letters except C
+        if ((symb != 'C') && (isPreviousChar( local, n, symb )) ) {
+            n++ ;
+        } else { // not dup
+            switch(symb) {
+            case 'A' : case 'E' : case 'I' : case 'O' : case 'U' :
+                if (n == 0) { 
+                    code.append(symb);
+                }
+                break ; // only use vowel if leading char
+            case 'B' :
+                if ( isPreviousChar(local, n, 'M') && 
+                     isLastChar(wdsz, n) ) { // B is silent if word ends in MB
+                    break;
+                }
+                code.append(symb);
+                break;
+            case 'C' : // lots of C special cases
+                /* discard if SCI, SCE or SCY */
+                if ( isPreviousChar(local, n, 'S') && 
+                     !isLastChar(wdsz, n) && 
+                     (FRONTV.indexOf(local.charAt(n + 1)) >= 0) ) { 
+                    break;
+                }
+                if (regionMatch(local, n, "CIA")) { // "CIA" -> X
+                    code.append('X'); 
+                    break;
+                }
+                if (!isLastChar(wdsz, n) && 
+                    (FRONTV.indexOf(local.charAt(n + 1)) >= 0)) {
+                    code.append('S');
+                    break; // CI,CE,CY -> S
+                }
+                if (isPreviousChar(local, n, 'S') &&
+					isNextChar(local, n, 'H') ) { // SCH->sk
+                    code.append('K') ; 
+                    break ;
+                }
+                if (isNextChar(local, n, 'H')) { // detect CH
+                    if ((n == 0) && 
+                        (wdsz >= 3) && 
+                        isVowel(local,2) ) { // CH consonant -> K consonant
+                        code.append('K');
+                    } else { 
+                        code.append('X'); // CHvowel -> X
+                    }
+                } else { 
+                    code.append('K');
+                }
+                break ;
+            case 'D' :
+                if (!isLastChar(wdsz, n + 1) && 
+                    isNextChar(local, n, 'G') && 
+                    (FRONTV.indexOf(local.charAt(n + 2)) >= 0)) { // DGE DGI DGY -> J 
+                    code.append('J'); n += 2 ;
+                } else { 
+                    code.append('T');
+                }
+                break ;
+            case 'G' : // GH silent at end or before consonant
+                if (isLastChar(wdsz, n + 1) && 
+                    isNextChar(local, n, 'H')) {
+                    break;
+                }
+                if (!isLastChar(wdsz, n + 1) &&  
+                    isNextChar(local,n,'H') && 
+                    !isVowel(local,n+2)) {
+                    break;
+                }
+                if ((n > 0) && 
+                    ( regionMatch(local, n, "GN") ||
+                      regionMatch(local, n, "GNED") ) ) {
+                    break; // silent G
+                }
+                if (isPreviousChar(local, n, 'G')) {
+                    hard = true ;
+                } else {
+                    hard = false ;
+                }
+                if (!isLastChar(wdsz, n) && 
+                    (FRONTV.indexOf(local.charAt(n + 1)) >= 0) && 
+                    (!hard)) {
+                    code.append('J');
+                } else {
+                    code.append('K');
+                }
+                break ;
+            case 'H':
+                if (isLastChar(wdsz, n)) {
+                    break ; // terminal H
+                }
+                if ((n > 0) && 
+                    (VARSON.indexOf(local.charAt(n - 1)) >= 0)) {
+                    break;
+                }
+                if (isVowel(local,n+1)) {
+                    code.append('H'); // Hvowel
+                }
+                break;
+            case 'F': 
+            case 'J' : 
+            case 'L' :
+            case 'M': 
+            case 'N' : 
+            case 'R' :
+                code.append(symb); 
+                break;
+            case 'K' :
+                if (n > 0) { // not initial
+                    if (!isPreviousChar(local, n, 'C')) {
+                        code.append(symb);
+                    }
+                } else {
+                    code.append(symb); // initial K
+                }
+                break ;
+            case 'P' :
+                if (isNextChar(local,n,'H')) {
+                    // PH -> F
+                    code.append('F');
+                } else {
+                    code.append(symb);
+                }
+                break ;
+            case 'Q' :
+                code.append('K');
+                break;
+            case 'S' :
+                if (regionMatch(local,n,"SH") || 
+				    regionMatch(local,n,"SIO") || 
+				    regionMatch(local,n,"SIA")) {
+                    code.append('X');
+                } else {
+                    code.append('S');
+                }
+                break;
+            case 'T' :
+                if (regionMatch(local,n,"TIA") || 
+				    regionMatch(local,n,"TIO")) {
+                    code.append('X'); 
+                    break;
+                }
+                if (regionMatch(local,n,"TCH")) {
+                    // Silent if in "TCH"
+                    break;
+                }
+                // substitute numeral 0 for TH (resembles theta after all)
+                if (regionMatch(local,n,"TH")) {
+                    code.append('0');
+                } else {
+                    code.append('T');
+                }
+                break ;
+            case 'V' :
+                code.append('F'); break ;
+            case 'W' : case 'Y' : // silent if not followed by vowel
+                if (!isLastChar(wdsz,n) && 
+                    isVowel(local,n+1)) {
+                    code.append(symb);
+                }
+                break ;
+            case 'X' :
+                code.append('K'); code.append('S');
+                break ;
+            case 'Z' :
+                code.append('S'); break ;
+            } // end switch
+            n++ ;
+        } // end else from symb != 'C'
+        if (code.length() > this.getMaxCodeLen()) { 
+        	code.setLength(this.getMaxCodeLen()); 
+        }
+    }
+    return code.toString();
+}
+3:
+static String clean(String str) {
+    if (str == null || str.length() == 0) {
+        return str;
+    }
+    int len = str.length();
+    char[] chars = new char[len];
+    int count = 0;
+    for (int i = 0; i < len; i++) {
+        if (Character.isLetter(str.charAt(i))) {
+            chars[count++] = str.charAt(i);
+        }
+    }
+    if (count == len) {
+        return str.toUpperCase(java.util.Locale.ENGLISH);
+    }
+    return new String(chars, 0, count).toUpperCase(java.util.Locale.ENGLISH);
+}
